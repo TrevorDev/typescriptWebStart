@@ -1,9 +1,6 @@
-/// <reference path='../../typings/jquery/jquery.d.ts' />
-/// <reference path="../../typings/rivets/rivets.d.ts" />
-import $ = require("jquery")
-import rivets = require("rivets")
+/// <reference path="rivets.d.ts" />
 
-rivets.configure({
+Rivets.configure({
 		  // Attribute prefix in templates
 		  prefix: 'rv',
 		  // Preload templates with initial data on bind
@@ -18,4 +15,4 @@ rivets.configure({
 		  }
 		})
 var t = {test: ["hello", "one", "two"]}
-rivets.bind($('#app'), t)
+Rivets.bind(document.getElementById("para1"), t)

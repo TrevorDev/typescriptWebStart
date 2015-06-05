@@ -9,7 +9,8 @@
     "browserify-shim": "^3.8.8",
     "express": "^4.12.4",
     "gulp": "^3.9.0",
-    "jade": "^1.10.0"
+    "jade": "^1.10.0",
+    "typescript-require": "^0.2.9"
   },
   "devDependencies": {
     "browserify-shim": "^3.8.8"
@@ -27,6 +28,8 @@
     "jquery": "$"
   },
   "browserify": {
-    "transform": [ "browserify-shim" ]
+    "transform": [
+      "browserify-shim"
+    ]
   }
 }

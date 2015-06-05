@@ -1,8 +1,11 @@
 extends layout
 
 block mainContent
-    h1 Welcome
-    p Trevor
-
+    #app
+        li(rv-each-t="test") [[t]]
+        h1 Welcome
+        p Trevor
 block scriptList
     script(src='/public/ts/bundle.js')
+    script.
+        console.log(rivets)
