@@ -12,6 +12,7 @@
         "!./node_modules/**/*.ts"
     ],
     "files": [
-        "./app.ts"
+        "./app.ts",
+        "./public/ts/index.ts"
     ]
 }
