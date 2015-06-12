@@ -22,6 +22,9 @@
     },
     "gulp/gulp.d.ts": {
       "commit": "8b7cc13f6dbabd0a49de7ccba75c342160e600ad"
+    },
+    "rivets/rivets.d.ts": {
+      "commit": "066819c65ff561ca109955e0b725c253e243f0a2"
     }
   }
 }
