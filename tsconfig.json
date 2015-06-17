@@ -7,12 +7,7 @@
         "removeComments": true,
         "noLib": false
     },
-    "filesGlob": [
-        "./**/*.ts",
-        "!./node_modules/**/*.ts"
-    ],
     "files": [
-        "./app.ts",
-        "./public/ts/index.ts"
+        "./app.ts"
     ]
 }
