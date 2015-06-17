@@ -1,5 +1,5 @@
-/// <reference path='../../typings/jquery/jquery.d.ts' />
-/// <reference path="../../typings/rivets/rivets.d.ts" />
+/// <reference path='../../../typings/jquery/jquery.d.ts' />
+/// <reference path="../../../typings/rivets/rivets.d.ts" />
 import $ = require("jquery")
 import rivets = require("rivets")
 
@@ -17,5 +17,5 @@ rivets.configure({
 		    this.call(target, event, binding.view.models)
 		  }
 		})
-var t = {test: ["hello", "one", "two"]}
+var t = {test: ["hello", "onthee", "two"]}
 rivets.bind($('#app'), t)
