@@ -16,6 +16,7 @@ gulp.task('default', function() {
 });
 
 gulp.task("watchTS",function(){
+  //WAYYYYY TOO SLOW AT WATCHING
   watchFolder('./', function(file){
     if(isTSFile(file)){
       compileTSFile(file, function(){
