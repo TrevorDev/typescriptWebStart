@@ -11,6 +11,7 @@
     "glob": "^5.0.10",
     "gulp": "^3.9.0",
     "gulp-watch": "^4.2.4",
+    "hound": "^1.0.4",
     "jade": "^1.10.0",
     "typescript-require": "^0.2.9",
     "watch": "^0.16.0"

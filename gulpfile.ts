@@ -1,9 +1,11 @@
 /// <reference path='typings/node/node.d.ts' />
 /// <reference path='typings/gulp/gulp.d.ts' />
 /// <reference path='typings/watch/watch.d.ts' />
+/// <reference path='customTypings/hound/hound.d.ts' />
 /// <reference path='typings/glob/glob.d.ts' />
 import gulp = require('gulp')
 import watch = require('watch')
+import hound = require('hound')
 import cp = require('child_process')
 import glob = require('glob')
 import path = require('path')
@@ -73,12 +75,14 @@ function compileTSFile(file, cb?) {
 }
 
 function watchFolder(folder:string, handler:Function) {
-  watch.watchTree(folder, function (f, prev, curr) {
-    if (typeof f == "object" && prev === null && curr === null) {
-      // Finished walking the tree
-    }else{
-      console.log(f)
-      handler(f)
-    }
+  var watcher= hound.watch(folder)
+  watcher.on('create', function(file, stats) {
+    handler(file)
+  })
+  watcher.on('change', function(file, stats) {
+    handler(file)
+  })
+  watcher.on('delete', function(file) {
+    handler(file)
   })
 }
