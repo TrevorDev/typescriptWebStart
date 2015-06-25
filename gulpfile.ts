@@ -3,46 +3,79 @@
 /// <reference path='typings/watch/watch.d.ts' />
 /// <reference path='customTypings/hound/hound.d.ts' />
 /// <reference path='typings/glob/glob.d.ts' />
+/// <reference path='typings/es6-promise/es6-promise.d.ts' />
+/// <reference path='typings/rx/rx.all.d.ts' />
 import gulp = require('gulp')
 import watch = require('watch')
 import hound = require('hound')
 import cp = require('child_process')
 import glob = require('glob')
 import path = require('path')
+import rx = require('rx')
 
 var exec = cp.exec
 gulp.task('default', function() {
-  runCommandLine("tsc", function(){
-    browserifyViewLogic()
-  })
+  // runCommandLine("tsc", function(){
+  //   browserifyViewLogic()
+  // })
 });
 
-gulp.task("watchTS",function(){
-  //WAYYYYY TOO SLOW AT WATCHING
-  watchFolder('./', function(file){
-    if(isTSFile(file)){
-      compileTSFile(file, function(){
-        if(file.match(/^public/)){
-          browserifyFile(file)
-        }
-      })
-    }
-  })
-})
-
 gulp.task("runAndWatch",function(){
-  runCommandLine("nodemon app.js")
-  runCommandLine("gulp watchTS")
+  var nodemon = new CmdRunner("nodemon app.js -i *")
+  nodemon.run()  
+  watchAndCompile().forEach(function(data:any){
+    console.log(data)
+    if(isJSFile(data.file)){
+      nodemon.sendToStdin("rs")
+    }
+  });
 })
 
+function watchAndCompile(){
+  return rx.Observable.create(function (observer) {
+    watchFolder('./')
+      .filter((fileEvent)=>fileEvent.type == "save" || fileEvent.type == "change")
+      .forEach(function(fileEvent){
+        compileTSFile(fileEvent.file)
+        .then(()=>browserifyFile(fileEvent.file))
+        .then(()=>observer.onNext(fileEvent))
+      })
+    // watchFolder('./')
+    // .flatMap(
+    //   (fileEvent)=>compileTSFile(fileEvent.file),
+    //   (fileEvent, compiled)=>fileEvent)
+    // .flatMap(
+    //   (fileEvent)=>browserifyFile(fileEvent.file),
+    //   (fileEvent, compiled)=>fileEvent)
+    // .forEach(function(data){
+    //   observer.onNext(data)
+    // })
+    
+    // watchFolder('./')
+    //   .then(compileTS)
+    //   .then(compileBrowserify)
+    //   .then(function(){
+    //     observer.onNext(data)
+    //   })
+    
+    // watchFolder('./').forEach(function(data){
+    //   compileTSFile(data.file)
+    //   .then(function(){
+    //     return browserifyFile(data.file)
+    //   }).then(function(){
+    //     observer.onNext(data)
+    //   })
+    // })
+  })
+}
 
 function browserifyViewLogic() {
   glob("public/**/*.ts", function(err, f){
-    f.forEach(function(tsFile){
-      compileTSFile(f, function() {
-        browserifyFile(tsFile)
-      })
-    })
+    // f.forEach(function(tsFile){
+    //   compileTSFile(f, function() {
+    //     browserifyFile(tsFile)
+    //   })
+    // })
   })
 }
 
@@ -51,38 +84,83 @@ function isTSFile(file) {
   return file.match(/[^.]*\.ts$/)
 }
 
+function isJSFile(file) {
+  return file.match(/[^.]*\.js$/)
+}
+
+function isInPublicFolder(file) {
+  return file.match(/^public/)
+}
+
 function browserifyFile(tsFile) {
-  console.log("browserifying: "+tsFile+ " ...")
-  var jsFile = path.dirname(tsFile)+"/logic.js"
-  var outFile = path.dirname(tsFile)+"/bundle.js"
-  runCommandLine("browserify -d "+jsFile+" -o "+outFile, function(err, out, stderr){
+  return new Promise((resolve, reject) => {
+    //change this to only do on file called logic.js in public folder????
+    if(isInPublicFolder(tsFile)&&isTSFile(tsFile)){
+      console.log("browserifying: "+tsFile+ " ...")
+      var jsFile = path.dirname(tsFile)+"/logic.js"
+      var outFile = path.dirname(tsFile)+"/bundle.js"
+      new CmdRunner("browserify -d "+jsFile+" -o "+outFile).run().then(function(){
+        resolve()
+      })
+    }else{
+      resolve()
+    }
   })
 }
 
-function runCommandLine(cmd, cb?){
-  var com = exec(cmd, cb)
-  com.stdout.on('data', function (data) {
-    console.log('stdout: ' + data);
-  });
-  com.stderr.on('data', function (data) {
-    console.log('stderr: ' + data);
-  });
+function compileTSFile(file) {
+  return new Promise<boolean>((resolve, reject) => { 
+    if(isTSFile(file)){
+      console.log("Compiling ts: "+file)
+      new CmdRunner("tsc "+file+" --module commonjs").run().then(function(){
+        resolve(true);
+      })
+    }else{
+      resolve(false); 
+    }
+  })
 }
 
-function compileTSFile(file, cb?) {
-  console.log("Compiling ts: "+file)
-  runCommandLine("tsc "+file+" --module commonjs", cb)
+function watchFolder(folder:string) {
+  var watcher = hound.watch(folder)
+  var events = ["change", "create", "delete"].map(function(eventType){
+    return rx.Observable.fromEvent(watcher, eventType).map(function(file:string, stats){
+      return {file: file, stats: stats, type: eventType}
+    })
+  })
+  return rx.Observable.merge(events)
 }
 
-function watchFolder(folder:string, handler:Function) {
-  var watcher= hound.watch(folder)
-  watcher.on('create', function(file, stats) {
-    handler(file)
-  })
-  watcher.on('change', function(file, stats) {
-    handler(file)
-  })
-  watcher.on('delete', function(file) {
-    handler(file)
-  })
-}
+class CmdRunner {
+    private childProcess: cp.ChildProcess
+    constructor(public cmd: string) { }
+    run(){
+        return new Promise((resolve, reject) => {
+          this.childProcess = exec(this.cmd, function(){
+            resolve()
+          })
+          this.childProcess.stdout.on('data', function (data) {
+            console.log('stdout: ' + data);
+          });
+          this.childProcess.stderr.on('data', function (data) {
+            console.log('stderr: ' + data);
+          });
+        })
+    }
+    sendToStdin(text:string){
+      if(this.childProcess){
+        this.childProcess.stdin.write(text)
+      }
+    }
+    
+    kill(){
+      if(this.childProcess){
+        if(process.platform === 'win32'){
+          exec('taskkill /pid '+ this.childProcess.pid + ' /T /F');
+        }else{
+          exec('kill -s ' + "SIGKILL" + ' ' + this.childProcess.pid)
+        }
+        this.childProcess = null
+      }
+    }
+};

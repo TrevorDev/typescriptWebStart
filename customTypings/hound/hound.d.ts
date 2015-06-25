@@ -1,9 +1,10 @@
-declare module "hound" {
-	export interface Watcher {
-		on: (event: string, cb:(file:string, stats:any)=>void)=> void
-	}
+/// <reference path='../../typings/node/node.d.ts' />
 
-	export function watch(root: string): Watcher;
+
+declare module "hound" {
+	import events = require('events');
+
+	export function watch(root: string): events.EventEmitter;
 	export function unwatch(root: string): void;
 	export function clear(): void;
 }
