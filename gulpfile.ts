@@ -21,12 +21,13 @@ gulp.task('default', function() {
 });
 
 gulp.task("runAndWatch",function(){
-  var nodemon = new CmdRunner("nodemon app.js -i *")
+  var nodemon = new CmdRunner("node app.js")
   nodemon.run()  
   watchAndCompile().forEach(function(data:any){
     console.log(data)
     if(isJSFile(data.file)){
-      nodemon.sendToStdin("rs")
+      nodemon.kill()
+      nodemon.run()
     }
   });
 })
@@ -94,6 +95,7 @@ function isInPublicFolder(file) {
 
 function browserifyFile(tsFile) {
   return new Promise((resolve, reject) => {
+    //TODO use beefy instead!!!
     //change this to only do on file called logic.js in public folder????
     if(isInPublicFolder(tsFile)&&isTSFile(tsFile)){
       console.log("browserifying: "+tsFile+ " ...")
