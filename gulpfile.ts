@@ -12,22 +12,28 @@ import cp = require('child_process')
 import glob = require('glob')
 import path = require('path')
 import rx = require('rx')
+import fs = require('fs')
+
+var ignorePaths = ["./node_modules/**", "./typings/**", "./bower_components/**", "./custom_typings/**"]
 
 var exec = cp.exec
 gulp.task('default', function() {
-  // runCommandLine("tsc", function(){
-  //   browserifyViewLogic()
-  // })
+  var tsFiles = glob.sync("./**/*.ts", {ignore:ignorePaths})
+  //console.log(tsFiles)
+    tsFiles.forEach(function(tsFile){
+      compileTSFile(tsFile)
+    })
 });
 
 gulp.task("runAndWatch",function(){
   var nodemon = new CmdRunner("node app.js")
   nodemon.run()  
   watchAndCompile().forEach(function(data:any){
-    console.log(data)
+    //console.log(data)
     if(isJSFile(data.file)){
-      nodemon.kill()
-      nodemon.run()
+      nodemon.kill().then(function(){
+        nodemon.run()
+      })
     }
   });
 })
@@ -37,49 +43,12 @@ function watchAndCompile(){
     watchFolder('./')
       .filter((fileEvent)=>fileEvent.type == "save" || fileEvent.type == "change")
       .forEach(function(fileEvent){
+        //console.log(fileEvent)
         compileTSFile(fileEvent.file)
-        .then(()=>browserifyFile(fileEvent.file))
         .then(()=>observer.onNext(fileEvent))
       })
-    // watchFolder('./')
-    // .flatMap(
-    //   (fileEvent)=>compileTSFile(fileEvent.file),
-    //   (fileEvent, compiled)=>fileEvent)
-    // .flatMap(
-    //   (fileEvent)=>browserifyFile(fileEvent.file),
-    //   (fileEvent, compiled)=>fileEvent)
-    // .forEach(function(data){
-    //   observer.onNext(data)
-    // })
-    
-    // watchFolder('./')
-    //   .then(compileTS)
-    //   .then(compileBrowserify)
-    //   .then(function(){
-    //     observer.onNext(data)
-    //   })
-    
-    // watchFolder('./').forEach(function(data){
-    //   compileTSFile(data.file)
-    //   .then(function(){
-    //     return browserifyFile(data.file)
-    //   }).then(function(){
-    //     observer.onNext(data)
-    //   })
-    // })
   })
 }
-
-function browserifyViewLogic() {
-  glob("public/**/*.ts", function(err, f){
-    // f.forEach(function(tsFile){
-    //   compileTSFile(f, function() {
-    //     browserifyFile(tsFile)
-    //   })
-    // })
-  })
-}
-
 
 function isTSFile(file) {
   return file.match(/[^.]*\.ts$/)
@@ -91,23 +60,6 @@ function isJSFile(file) {
 
 function isInPublicFolder(file) {
   return file.match(/^public/)
-}
-
-function browserifyFile(tsFile) {
-  return new Promise((resolve, reject) => {
-    //TODO use beefy instead!!!
-    //change this to only do on file called logic.js in public folder????
-    if(isInPublicFolder(tsFile)&&isTSFile(tsFile)){
-      console.log("browserifying: "+tsFile+ " ...")
-      var jsFile = path.dirname(tsFile)+"/logic.js"
-      var outFile = path.dirname(tsFile)+"/bundle.js"
-      new CmdRunner("browserify -d "+jsFile+" -o "+outFile).run().then(function(){
-        resolve()
-      })
-    }else{
-      resolve()
-    }
-  })
 }
 
 function compileTSFile(file) {
@@ -124,22 +76,54 @@ function compileTSFile(file) {
 }
 
 function watchFolder(folder:string) {
-  var watcher = hound.watch(folder)
-  var events = ["change", "create", "delete"].map(function(eventType){
-    return rx.Observable.fromEvent(watcher, eventType).map(function(file:string, stats){
-      return {file: file, stats: stats, type: eventType}
+  //TODO: watch new folders when created
+  var watchTimeStamps = {};
+  var repeatEventFilter = 300 // 300 milisecond
+  
+  var folders = glob.sync(folder+"**", {ignore:ignorePaths})
+    .filter((f)=>fs.lstatSync(f).isDirectory())
+
+  
+  var folderEventStreams = folders.map(function(f){
+    //may not work on osx but screw those guys jk
+    var watcher = fs.watch(f)
+    watcher.on("error", function(){
+      
     })
+    return rx.Observable.fromEvent(watcher, "change", (args)=>({file: args[1]?f+"/"+args[1]:null, type: args[0]}))
   })
-  return rx.Observable.merge(events)
+  
+  
+  return rx.Observable.merge(folderEventStreams)
+    .filter((fileEvent)=>fileEvent.file != null)
+    .filter(function(fileEvent){
+      //some os fire multiple events on change so ignore the same event if fired twice within a timespan
+      //console.log(fileEvent)
+      var curTime = new Date().getTime()
+      var key = fileEvent.type+fileEvent.file
+      if(!watchTimeStamps[key] || (curTime - watchTimeStamps[key]) > repeatEventFilter){
+        watchTimeStamps[key] = curTime;
+        return true;
+      }else{
+        return false;
+      }
+    })
 }
+
+
 
 class CmdRunner {
     private childProcess: cp.ChildProcess
     constructor(public cmd: string) { }
     run(){
         return new Promise((resolve, reject) => {
+          if(this.childProcess){
+            //already started
+            resolve(false)
+            return
+          }
           this.childProcess = exec(this.cmd, function(){
-            resolve()
+            resolve(true)
           })
           this.childProcess.stdout.on('data', function (data) {
             console.log('stdout: ' + data);
@@ -156,13 +140,22 @@ class CmdRunner {
     }
     
     kill(){
-      if(this.childProcess){
-        if(process.platform === 'win32'){
-          exec('taskkill /pid '+ this.childProcess.pid + ' /T /F');
+      return new Promise((resolve, reject) => {
+        if(this.childProcess){
+          if(process.platform === 'win32'){
+            exec('taskkill /pid '+ this.childProcess.pid + ' /T /F', function(){
+              resolve(true)
+            })
+          }else{
+            //not tested on linux or osx yet
+            exec('kill -s ' + "SIGKILL" + ' ' + this.childProcess.pid, function(){
+              resolve(true)
+            })
+          }
+          this.childProcess = null
         }else{
-          exec('kill -s ' + "SIGKILL" + ' ' + this.childProcess.pid)
+          resolve(false)
         }
-        this.childProcess = null
-      }
+      })
     }
 };

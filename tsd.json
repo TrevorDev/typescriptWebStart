@@ -91,6 +91,9 @@
     },
     "rx/rx.time-lite.d.ts": {
       "commit": "6387999eb899d0ba02d37dd8697647718caca230"
+    },
+    "browserify/browserify.d.ts": {
+      "commit": "2c96e9e77765b72ce43ab8163f42e504f3e2facb"
     }
   }
 }
