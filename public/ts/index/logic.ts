@@ -15,5 +15,5 @@ rivets.configure({
 		    this.call(target, event, binding.view.models)
 		  }
 		})
-var t = {test: ["hello", "onthee", "twossss"]}
+var t = {test: ["hello", "onthee", "a"]}
 rivets.bind($('#app'), t)

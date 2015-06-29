@@ -11,6 +11,7 @@ var ignorePaths = ["./node_modules/**", "./typings/**", "./bower_components/**",
 
 //compiles all ts files
 gulp.task('default', function() {
+  console.log("use atom-typescript instead for autocompile without needing references")
   var tsFiles = glob.sync("./**/*.ts", {ignore:ignorePaths})
     tsFiles.forEach(function(tsFile){
       compileTSFile(tsFile);
