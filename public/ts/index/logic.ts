@@ -1,5 +1,3 @@
-/// <reference path='../../../typings/jquery/jquery.d.ts' />
-/// <reference path="../../../typings/rivets/rivets.d.ts" />
 import $ = require("jquery")
 import rivets = require("rivets")
 

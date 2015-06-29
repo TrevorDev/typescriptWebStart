@@ -1,5 +1,3 @@
-/// <reference path='../typings/express/express.d.ts' />
-/// <reference path='../typings/glob/glob.d.ts' />
 /// <reference path='../typings/body-parser/body-parser.d.ts' />
 import express = require("express")
 import bodyParser = require("body-parser");

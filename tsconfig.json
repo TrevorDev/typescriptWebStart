@@ -1,10 +1,58 @@
 {
-	"compilerOptions": {
-        "target": "ES5",
+    "version": "1.5.0-alpha",
+    "compilerOptions": {
+        "target": "es5",
         "module": "commonjs",
-        "sourceMap": true
+        "declaration": false,
+        "noImplicitAny": false,
+        "removeComments": true,
+        "noLib": false,
+        "preserveConstEnums": true,
+        "suppressImplicitAnyIndexErrors": true
     },
+    "filesGlob": [
+        "./**/*.ts",
+        "!./node_modules/**/*.ts"
+    ],
     "files": [
-        "./app.ts"
+        "./app.d.ts",
+        "./app.ts",
+        "./gulpfile.ts",
+        "./libs/appFactory.d.ts",
+        "./libs/appFactory.ts",
+        "./public/ts/index/logic.d.ts",
+        "./public/ts/index/logic.ts",
+        "./typings/body-parser/body-parser.d.ts",
+        "./typings/bootstrap/bootstrap.d.ts",
+        "./typings/browserify/browserify.d.ts",
+        "./typings/es6-promise/es6-promise.d.ts",
+        "./typings/express/express.d.ts",
+        "./typings/glob/glob.d.ts",
+        "./typings/gulp/gulp.d.ts",
+        "./typings/jquery/jquery.d.ts",
+        "./typings/minimatch/minimatch.d.ts",
+        "./typings/node/node.d.ts",
+        "./typings/rivets/rivets.d.ts",
+        "./typings/rx/rx-lite.d.ts",
+        "./typings/rx/rx.aggregates.d.ts",
+        "./typings/rx/rx.all.d.ts",
+        "./typings/rx/rx.async-lite.d.ts",
+        "./typings/rx/rx.async.d.ts",
+        "./typings/rx/rx.backpressure-lite.d.ts",
+        "./typings/rx/rx.backpressure.d.ts",
+        "./typings/rx/rx.binding-lite.d.ts",
+        "./typings/rx/rx.binding.d.ts",
+        "./typings/rx/rx.coincidence-lite.d.ts",
+        "./typings/rx/rx.coincidence.d.ts",
+        "./typings/rx/rx.d.ts",
+        "./typings/rx/rx.experimental.d.ts",
+        "./typings/rx/rx.joinpatterns.d.ts",
+        "./typings/rx/rx.lite.d.ts",
+        "./typings/rx/rx.testing.d.ts",
+        "./typings/rx/rx.time-lite.d.ts",
+        "./typings/rx/rx.time.d.ts",
+        "./typings/rx/rx.virtualtime.d.ts",
+        "./typings/tsd.d.ts",
+        "./typings/watch/watch.d.ts"
     ]
 }
