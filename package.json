@@ -11,12 +11,10 @@
     "express": "^4.12.4",
     "glob": "^5.0.10",
     "gulp": "^3.9.0",
-    "gulp-watch": "^4.2.4",
     "hound": "^1.0.4",
     "jade": "^1.10.0",
     "rx": "^2.5.3",
-    "typescript-require": "^0.2.9",
-    "watch": "^0.16.0"
+    "typescript-require": "^0.2.9"
   },
   "devDependencies": {
     "browserify-shim": "^3.8.8"
@@ -27,7 +25,6 @@
   "author": "",
   "license": "ISC",
   "browser": {
-    "rivets": "./bower_components/rivets/dist/rivets.js",
     "jquery": "./bower_components/jquery/dist/jquery.min.js"
   },
   "browserify-shim": {

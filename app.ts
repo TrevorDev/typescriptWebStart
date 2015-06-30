@@ -1,4 +1,4 @@
-import appFactory from "./libs/appFactory"
+import appFactory = require("./libs/appFactory")
 import browserify = require("browserify")
 var app = appFactory.createApp()
 
