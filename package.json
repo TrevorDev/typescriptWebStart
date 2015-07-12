@@ -14,6 +14,7 @@
     "hound": "^1.0.4",
     "jade": "^1.10.0",
     "rx": "^2.5.3",
+    "sightglass": "^0.2.4",
     "typescript-require": "^0.2.9"
   },
   "devDependencies": {
@@ -25,7 +26,8 @@
   "author": "",
   "license": "ISC",
   "browser": {
-    "jquery": "./bower_components/jquery/dist/jquery.min.js"
+    "jquery": "./bower_components/jquery/dist/jquery.min.js",
+    "rivets": "./bower_components/rivets/dist/rivets.js"
   },
   "browserify-shim": {
     "jquery": "$"

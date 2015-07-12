@@ -32,7 +32,6 @@
         "./typings/rivets/rivets.d.ts",
         "./typings/rx/rx-lite.d.ts",
         "./typings/rx/rx.aggregates.d.ts",
-        "./typings/rx/rx.all.d.ts",
         "./typings/rx/rx.async-lite.d.ts",
         "./typings/rx/rx.async.d.ts",
         "./typings/rx/rx.backpressure-lite.d.ts",
@@ -49,7 +48,6 @@
         "./typings/rx/rx.time-lite.d.ts",
         "./typings/rx/rx.time.d.ts",
         "./typings/rx/rx.virtualtime.d.ts",
-        "./typings/tsd.d.ts",
-        "./typings/watch/watch.d.ts"
+        "./typings/tsd.d.ts"
     ]
 }
