@@ -1,17 +1,16 @@
 import appFactory = require("./libs/appFactory")
 import browserify = require("browserify")
-var app = appFactory.createApp()
 
-app.get('/', function(req, res) {
+let app = appFactory.createApp()
+
+app.get('/',async function(req, res) {
 	res.render('index')
 });
 
-
-
 app.get('/browserify/*', function(req, res) {
 	//todo cache this in production
-	var reqFile:string = req.params[0]
-	var stream = browserify(["./public/ts/"+reqFile]).bundle()
+	let reqFile:string = req.params[0]
+	let stream = browserify(["./public/ts/"+reqFile]).bundle()
 	stream.on("data", function(buffer){
 		res.write(buffer)
 	})

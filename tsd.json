@@ -91,6 +91,12 @@
     },
     "browserify/browserify.d.ts": {
       "commit": "2c96e9e77765b72ce43ab8163f42e504f3e2facb"
+    },
+    "lodash/lodash.d.ts": {
+      "commit": "38c6ccfde0e67ff10d7408e0ee8b7720b3f21d3b"
+    },
+    "sequelize/sequelize.d.ts": {
+      "commit": "38c6ccfde0e67ff10d7408e0ee8b7720b3f21d3b"
     }
   }
 }
