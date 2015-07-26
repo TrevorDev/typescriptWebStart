@@ -1,10 +1,9 @@
-/// <reference path='../typings/body-parser/body-parser.d.ts' />
-import express = require("express")
-import bodyParser = require("body-parser");
+import express from "express"
+import bodyParser from "body-parser";
 
-export = {
+export default {
 	createApp: function(){
-		var app = express()
+		var app = express();
 		app.set('views', __dirname + '/../views');
 		app.set('view engine', 'jade');
 		app.set('view options', { layout: false });

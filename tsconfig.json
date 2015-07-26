@@ -1,8 +1,13 @@
 {
-    "version": "1.5.0-alpha",
+    "version": "1.6",
+    "externalTranspiler": "babel",
     "compilerOptions": {
-        "target": "es5",
+        "target": "es6",
         "module": "commonjs",
+        "isolatedModules": false,
+        "jsx": "react",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
         "declaration": false,
         "noImplicitAny": false,
         "removeComments": true,
@@ -24,7 +29,6 @@
         "./typings/body-parser/body-parser.d.ts",
         "./typings/bootstrap/bootstrap.d.ts",
         "./typings/browserify/browserify.d.ts",
-        "./typings/es6-promise/es6-promise.d.ts",
         "./typings/express/express.d.ts",
         "./typings/glob/glob.d.ts",
         "./typings/gulp/gulp.d.ts",

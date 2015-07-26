@@ -1,6 +1,6 @@
-import rivets = require("rivets")
+import * as rivets from "rivets"
 
-export = {
+export default {
 	createDefault: function(){
     rivets.configure({
 		  // Attribute prefix in templates
