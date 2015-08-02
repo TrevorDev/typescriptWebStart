@@ -6,6 +6,4 @@ To install dependencies:
 	npm install
 	tsd reinstall
 
-TO build then run:
-	gulp
-	node app.js
+TO build open in atom editor and run build
